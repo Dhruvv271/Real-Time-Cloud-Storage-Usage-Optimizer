@@ -11,3 +11,10 @@ The Minimum Viable Product (MVP) focuses on:
 
 Advanced features such as multi-cloud support, machine learning,
 and distributed deployment are intentionally excluded from the MVP.
+## Core Components
+- Event Simulator (C++)
+- Real-time Analytics Engine (C++)
+## Optimization Strategy
+- Files accessed fewer than 3 times are classified as cold
+- Cold files are recommended for archival storage
+- Cost savings are estimated using tiered storage pricing

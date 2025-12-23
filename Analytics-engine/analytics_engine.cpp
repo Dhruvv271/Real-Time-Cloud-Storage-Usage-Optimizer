@@ -40,20 +40,41 @@ void printAnalytics() {
              << " | Status: " << status << endl;
     }
 }
+void printRecommendations() {
+    cout << "\n=== Optimization Recommendations ===\n";
+
+    for (auto& entry : storage_usage) {
+        string file_id = entry.first;
+        int size_mb = entry.second;
+        int accesses = access_count[file_id];
+
+        if (accesses < 3) {
+            double hot_cost = (size_mb / 1024.0) * 0.10;
+            double cold_cost = (size_mb / 1024.0) * 0.02;
+
+            cout << "File: " << file_id
+                 << " | Action: ARCHIVE"
+                 << " | Monthly Savings: $"
+                 << (hot_cost - cold_cost) << endl;
+        }
+    }
+}
+
 
 int main() {
-    vector<StorageEvent> events = {
-        {"file_1", "UPLOAD", time(nullptr), 10},
-        {"file_1", "READ", time(nullptr), 10},
-        {"file_1", "READ", time(nullptr), 10},
-        {"file_2", "UPLOAD", time(nullptr), 20},
-        {"file_2", "READ", time(nullptr), 20}
-    };
+    StorageEvent event;
 
-    for (const auto& event : events) {
+    while (cin >> event.file_id
+               >> event.event_type
+               >> event.timestamp
+               >> event.size_mb) {
         processEvent(event);
+        printAnalytics();
+        printRecommendations();
+        
     }
+    
 
-    printAnalytics();
     return 0;
 }
+

@@ -28,12 +28,11 @@ int main() {
         event.timestamp = time(nullptr);
         event.size_mb = (rand() % 100) + 1;
 
-        cout << "{ "
-             << "\"file_id\": \"" << event.file_id << "\", "
-             << "\"event_type\": \"" << event.event_type << "\", "
-             << "\"timestamp\": " << event.timestamp << ", "
-             << "\"size_mb\": " << event.size_mb
-             << " }" << endl;
+      cout << event.file_id << " "
+           << event.event_type << " "
+           << event.timestamp << " "
+           << event.size_mb << endl;
+
     }
 
     return 0;
