@@ -3,8 +3,11 @@
 #include <string>
 #include <vector>
 #include <ctime>
+#include "config.h"
+
 
 using namespace std;
+
 
 struct StorageEvent {
     string file_id;
@@ -13,8 +16,12 @@ struct StorageEvent {
     int size_mb;
 };
 
+
+
+
 unordered_map<string, int> access_count;
 unordered_map<string, int> storage_usage;
+
 
 void processEvent(const StorageEvent& event) {
     if (event.event_type == "UPLOAD") {
@@ -49,7 +56,7 @@ void printRecommendations() {
         int accesses = access_count[file_id];
 
         if (accesses < 3) {
-            double hot_cost = (size_mb / 1024.0) * 0.10;
+            double hot_cost = (size_mb / 1024.0) * 0.1;
             double cold_cost = (size_mb / 1024.0) * 0.02;
 
             cout << "File: " << file_id
@@ -61,8 +68,12 @@ void printRecommendations() {
 }
 
 
+
 int main() {
     StorageEvent event;
+    loadConfig("E:/Real time Cloud Storage Optimizer/config/config.txt");
+ 
+
 
     while (cin >> event.file_id
                >> event.event_type
@@ -71,10 +82,11 @@ int main() {
         processEvent(event);
         printAnalytics();
         printRecommendations();
+        }
         
-    }
+    
     
 
     return 0;
-}
+    }
 
