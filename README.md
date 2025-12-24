@@ -1,5 +1,6 @@
 # Cloud Storage Usage Optimizer
-Work in progress.
+Have to fix the Dashboard file for "Getting Recommendations" on the webpage, though its working on the terminal when you run the server. 
+Work in progress
 ## MVP Scope
 
 The Minimum Viable Product (MVP) focuses on:
