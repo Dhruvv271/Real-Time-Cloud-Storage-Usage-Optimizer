@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Storage Analytics Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #333; }
+        input, select, button { margin: 5px 0; padding: 5px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f0f0f0; }
+        .section { margin-top: 40px; }
+        #status { margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+
+<h1>Cloud Storage Analytics Dashboard</h1>
+
+<div class="section">
+    <h2>Send Event</h2>
+    <form id="eventForm">
+        <label>File ID: <input type="text" id="file_id" required></label><br>
+        <label>Event Type: 
+            <select id="event_type" required>
+                <option value="UPLOAD">UPLOAD</option>
+                <option value="READ">READ</option>
+                <option value="DELETE">DELETE</option>
+            </select>
+        </label><br>
+        <label>Timestamp: <input type="number" id="timestamp" required></label><br>
+        <label>Size (MB): <input type="number" id="size_mb" required></label><br>
+        <button type="submit">Send Event</button>
+    </form>
+    <div id="status"></div>
+</div>
+
+<div class="section">
+    <h2>Analytics</h2>
+    <button onclick="fetchAnalytics()">Refresh Analytics</button>
+    <table id="analyticsTable">
+        <thead>
+            <tr><th>File ID</th><th>Accesses</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Recommendations</h2>
+    <button onclick="fetchRecommendations()">Refresh Recommendations</button>
+    <table id="recommendationsTable">
+        <thead>
+            <tr><th>File ID</th><th>Action</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+const apiBase = "http://localhost:8080";
+
+// Send event
+document.getElementById("eventForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    
+    const event = {
+        file_id: document.getElementById("file_id").value,
+        event_type: document.getElementById("event_type").value,
+        timestamp: parseInt(document.getElementById("timestamp").value),
+        size_mb: parseInt(document.getElementById("size_mb").value)
+    };
+
+    fetch(`${apiBase}/event`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(event)
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("status").textContent = "Event sent successfully!";
+        fetchAnalytics();
+        fetchRecommendations();
+    })
+    .catch(err => {
+        document.getElementById("status").textContent = "Error sending event!";
+        console.error(err);
+    });
+});
+
+// Fetch analytics
+function fetchAnalytics() {
+    fetch(`${apiBase}/analytics`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector("#analyticsTable tbody");
+            tbody.innerHTML = "";
+            for (const file_id in data) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${file_id}</td><td>${data[file_id].accesses}</td><td>${data[file_id].status}</td>`;
+                tbody.appendChild(row);
+            }
+        });
+}
+
+// Fetch recommendations
+function fetchRecommendations() {
+    fetch(`${apiBase}/recommendations`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector("#recommendationsTable tbody");
+            tbody.innerHTML = "";
+            data.forEach(item => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${item.file_id}</td><td>${item.action}</td>`;
+                tbody.appendChild(row);
+            });
+        });
+}
+
+// Auto-refresh every 5 seconds
+setInterval(() => {
+    fetchAnalytics();
+    fetchRecommendations();
+}, 5000);
+</script>
+
+</body>
+</html>

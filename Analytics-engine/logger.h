@@ -5,7 +5,7 @@
 #include <ctime>
 #include <string>
 
-enum LogLevel { DEBUG, INFO, WARN, ERROR };
+enum LogLevel { DEBUG, INFO, WARN, LOG_ERROR };
 
 class Logger {
 public:
